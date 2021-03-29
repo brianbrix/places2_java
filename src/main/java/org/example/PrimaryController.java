@@ -1,26 +1,25 @@
 package org.example;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.StringReader;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import java.net.URL;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Logger;
+import java.util.ResourceBundle;
 
 
-import com.google.gson.stream.JsonReader;
-import javafx.beans.Observable;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.KeyEvent;
@@ -29,21 +28,39 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 
-public class PrimaryController {
+public class PrimaryController implements Initializable {
+
 
     public Label helloWorld;
     public TextField searchbar;
     public Label error_text;
     public TableView tableView;
-    List<PlacesData> placesDataList = new ArrayList<>();
+    public String temp;
 
+    @FXML
+    private TableColumn businessName;
+    @FXML
+    private  TableColumn businessAddress;
+    @FXML
+    private  TableColumn cityName;
+    @FXML
+    private  TableColumn zipCode;
+    @FXML
+    private  TableColumn stateName;
 
-    public void sayHelloWorld(ActionEvent actionEvent) {
-        helloWorld.setText("Hello World");
+    @Override
+    public void initialize(URL url, ResourceBundle resourceBundle) {
+
+        ObservableList<PlacesData> items = tableView.getItems();
+        if (items.isEmpty()){
+            tableView.setVisible(false);
+        }else {
+            tableView.setVisible(true);
+        }
     }
 
     public void doSearch(ActionEvent actionEvent) throws URISyntaxException, IOException, InterruptedException, JSONException {
-        System.out.println(searchbar.getText());
+
         if (searchbar.getText().equals(""))
         {
             error_text.setText("Please type a place to search.");
@@ -52,11 +69,12 @@ public class PrimaryController {
 
         startSeaching();
 
-
-
     }
 
+
     private void startSeaching() throws URISyntaxException, IOException, InterruptedException, JSONException{
+
+        tableView.setVisible(true);
 
         String address= searchbar.getText().replace(" ", "%20");
 
@@ -76,17 +94,15 @@ public class PrimaryController {
         String placeObject = String.valueOf(responseHandler.body());
         JSONObject jsonObject = new JSONObject(placeObject);
 
-        placesDataList.clear();
+        List<PlacesData> placesDataList = new ArrayList<>();
         JSONArray candidates = jsonObject.getJSONArray("candidates");
-
-
-
 
         for (int i = 0; i < candidates.length(); i++){
 
             JSONObject jsonObjectPlace = candidates.getJSONObject(i);
             String placeId = jsonObjectPlace.getString("place_id");
 
+//            PlacesData placesData = getDataResponses.getData(placeId);
             PlacesData placesData = getPlaceDetails(placeId);
             placesDataList.add(placesData);
 
@@ -94,24 +110,18 @@ public class PrimaryController {
 
         final ObservableList<PlacesData> data = FXCollections.observableArrayList(placesDataList);
 
-        TableColumn businessName = new TableColumn("Business Name");
-        TableColumn businessAddress = new TableColumn("Business address");
-        TableColumn city = new TableColumn("City");
-        TableColumn state = new TableColumn("State");
-        TableColumn zipCode = new TableColumn("Zip Code");
-        tableView.getColumns().addAll(businessName, businessAddress, city, state,zipCode);
-
         businessName.setCellValueFactory(new PropertyValueFactory<>("businessName"));
         businessAddress.setCellValueFactory(new PropertyValueFactory<>("businessAddress"));
-        city.setCellValueFactory(new PropertyValueFactory<>("cityName"));
-        state.setCellValueFactory(new PropertyValueFactory<>("stateName"));
+        cityName.setCellValueFactory(new PropertyValueFactory<>("cityName"));
+        stateName.setCellValueFactory(new PropertyValueFactory<>("stateName"));
         zipCode.setCellValueFactory(new PropertyValueFactory<>("zipCode"));
+
 
         tableView.setItems(data);
 
     }
 
-    private PlacesData getPlaceDetails(String placeId) throws URISyntaxException, IOException, InterruptedException, JSONException {
+    public PlacesData getPlaceDetails(String placeId) throws URISyntaxException, IOException, InterruptedException, JSONException {
 
         PlacesData placesData = new PlacesData();
 
@@ -177,12 +187,16 @@ public class PrimaryController {
         {
             error_text.setText("");
 
-            System.out.println("-*-*-* "+ ke.getText());
             //Start searching
             startSeaching();
 
-
         }
+
+    }
+
+    public void handleKeyReleased(KeyEvent keyEvent) throws InterruptedException, IOException, JSONException, URISyntaxException {
+
+//        startSeaching();
 
     }
 }
