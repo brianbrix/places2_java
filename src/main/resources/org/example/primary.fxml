@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.PrimaryController">
+   <children>
+      <TextField id="searchbar" fx:id="searchbar" layoutX="14.0" layoutY="16.0" onKeyPressed="#handleKeyPressed" prefHeight="19.0" prefWidth="492.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="94.0" />
+      <Button layoutX="506.0" layoutY="16.0" mnemonicParsing="false" onAction="#doSearch" prefHeight="25.0" prefWidth="91.0" text="Search" AnchorPane.rightAnchor="3.0" />
+      <Label fx:id="error_text" layoutX="14.0" layoutY="45.0" prefHeight="25.0" prefWidth="378.0" textAlignment="CENTER" textFill="#e80808" wrapText="true" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="208.0" AnchorPane.topAnchor="45.0" />
+      <TableView fx:id="tableView" layoutX="14.0" layoutY="73.0" prefHeight="319.0" prefWidth="576.0" AnchorPane.bottomAnchor="8.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="73.0" />
+   </children>
+</AnchorPane>
